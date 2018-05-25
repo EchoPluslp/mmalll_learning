@@ -3,7 +3,7 @@
 <mapper namespace="com.mmall.dao.UserMapper" >
   <!--类型-->
 
-  <resultMap id="BaseResultMap" type="com.mmall.pojo.User" >
+  <resultMap id="BaseResultMap" type="com.mmall.service.impl.pojo.User" >
     <constructor ><!--构造器-->
       <idArg column="id" jdbcType="INTEGER" javaType="java.lang.Integer" />
       <arg column="username" jdbcType="VARCHAR" javaType="java.lang.String" />
@@ -31,17 +31,17 @@
     delete from mmall_user
     where id = #{id,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.mmall.pojo.User" >
+  <insert id="insert" parameterType="com.mmall.service.impl.pojo.User" >
     insert into mmall_user (id, username, password, 
       email, phone, question, 
       answer, role, create_time, 
       update_time)
     values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{question,jdbcType=VARCHAR}, 
-      #{answer,jdbcType=VARCHAR}, #{role,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP})
+      #{answer,jdbcType=VARCHAR}, #{role,jdbcType=INTEGER}, now(),
+      now())
   </insert>
-  <insert id="insertSelective" parameterType="com.mmall.pojo.User" >
+  <insert id="insertSelective" parameterType="com.mmall.service.impl.pojo.User" >
     insert into mmall_user
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -69,10 +69,10 @@
         role,
       </if>
       <if test="createTime != null" >
-        create_time,
+        now(),
       </if>
       <if test="updateTime != null" >
-        update_time,
+        now(),
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -104,11 +104,11 @@
         #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateTime != null" >
-        #{updateTime,jdbcType=TIMESTAMP},
+        #{updateTime,now()},
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.mmall.pojo.User" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.mmall.service.impl.pojo.User" >
     update mmall_user
     <set >
       <if test="username != null" >
@@ -136,12 +136,12 @@
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
       <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        update_time = now(),
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.mmall.pojo.User" >
+  <update id="updateByPrimaryKey" parameterType="com.mmall.service.impl.pojo.User" >
     update mmall_user
     set username = #{username,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
@@ -154,4 +154,55 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <!--这是自定义的sql语句，用户检查输入的用户名是否存在
+    注意：只用#的方式是预处理过程，避免sql注入-->
+  <select id="CheckUsername" resultType="int" parameterType="string">
+    SELECT  COUNT(1) from mmall_user
+    WHERE  username=#{username}
+  </select>
+
+  <select id="CheckEmail" resultType="int" parameterType="string">
+    SELECT  COUNT(1) from mmall_user
+    WHERE  email=#{email}
+  </select>
+
+  <!--使用include语句，直接查找需要查找的内容
+     一般情况下，需要避免使用select * from-->
+  <select id="selectLogin" resultMap="BaseResultMap" parameterType="map">
+  SELECT
+    <include refid="Base_Column_List" />
+  FROM  mmall_user
+    WHERE  username=#{username}
+    AND  password=#{password}
+  </select>
+  
+  <select id="selectQuestionByUsername" resultType="String" parameterType="String">
+    SELECT question FROM mmall_user
+    WHERE username = #{username}
+  </select>
+  
+  <select id="checkAnswer" resultType="int" parameterType="map">
+  SELECT  COUNT(1) FROM mmall_user
+  WHERE username = #{username}
+  AND question = #{question}
+  AND answer = #{answer}
+  </select>
+  
+  <update id="updatePasswordByUsername" parameterType="map">
+   UPDATE mmall_user
+   SET password = #{passwordNew}, update_time = now()
+   WHERE username = #{username}
+  </update>
+
+  <select id="checkPassword" resultType="int" parameterType="map">
+    SELECT count(1) FROM mmall_user
+    WHERE id=#{userid}
+    AND password = #{password}
+  </select>
+
+  <select id="CheckEmailByUserId" resultType="int" parameterType="map">
+SELECT  COUNT(1) from mmall_user
+    WHERE  email=#{email}
+    AND id!=#{userid}
+  </select>
 </mapper>
