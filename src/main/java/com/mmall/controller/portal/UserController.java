@@ -3,13 +3,13 @@ package com.mmall.controller.portal;
 import com.mmall.common.Const;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
-import com.mmall.service.impl.pojo.User;
 import com.mmall.service.impl.UserServiceImpl;
+import com.mmall.service.impl.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 
@@ -20,7 +20,7 @@ import javax.servlet.http.HttpSession;
  * @create 2018-04-27 22:03
  **/
 
-@Controller
+@RestController
 @RequestMapping(value = "/user/")
 public class UserController {
 
@@ -36,7 +36,6 @@ public class UserController {
      * @return 如果登陆成功返回用户，否则提示错误
      */
     @RequestMapping(value = "login.do",method = RequestMethod.POST)
-    @ResponseBody //！！返回值自动通过springmvc的插件将返回值序列化为json
      //xml文件配置方式：dispatcher-servlet.xml文件中的supportedMediaTypes属性
     public ServerResponse<User> login(String username, String password, HttpSession session){
         //在controller层调用service层函数 server-mybatis-dao
