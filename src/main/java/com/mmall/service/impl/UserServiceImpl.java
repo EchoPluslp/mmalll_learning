@@ -26,6 +26,7 @@ public class UserServiceImpl implements IUserService{
     @Autowired
     private UserMapper userMapper;
 
+    @Override
     public ServerResponse<User> login(String username, String password) {
         //检查登陆的用户名存不存在
          int resultCount = userMapper.CheckUsername(username);
@@ -38,8 +39,8 @@ public class UserServiceImpl implements IUserService{
          if(user ==null) {
              return ServerResponse.createByErrorMessage("密码错误");
          }
-         //到达说明，账号和密码都正确
-        user.setPassword(StringUtils.EMPTY);//将密码置null
+         //到达说明，账号和密码都正确 ，将密码置null
+        user.setPassword(StringUtils.EMPTY);
         return  ServerResponse.createBySuccess("登陆成功",user);
     }
 
@@ -48,6 +49,7 @@ public class UserServiceImpl implements IUserService{
      * @param user 当前填写的信息封装User类
      * @return String 注册成功或者失败
      */
+    @Override
     public ServerResponse<String> register(User user){
         //校验用户名和邮箱是否存在-----------start--------------
         ServerResponse vaildResponse =  checkVaild(user.getUsername(),Const.USERNAME);
@@ -82,6 +84,7 @@ public class UserServiceImpl implements IUserService{
      * @param type 值的类型
      * @return  是否存在
      */
+    @Override
     public ServerResponse<String> checkVaild(String str,String type){
         if(StringUtils.isNotBlank(type)){//判断type是否为空
             if(Objects.equals(type,Const.USERNAME)){
@@ -108,6 +111,7 @@ public class UserServiceImpl implements IUserService{
      * @param username 当前用户名
      * @return 根据当前用户名获取密码提示问题
      */
+    @Override
     public ServerResponse<String> forgetGetQuestion(String username){
         //检验当前用户名是否存在
         ServerResponse servceCount = checkVaild(username,Const.USERNAME);
@@ -130,6 +134,7 @@ public class UserServiceImpl implements IUserService{
      * @param answer 密码提示答案
      * @return 问题的答案是否正确
      */
+    @Override
     public ServerResponse<String> checkAnswer(String username,String question,String answer){
         int resultCount = userMapper.checkAnswer(username,question,answer);
         if(resultCount > 0){
@@ -149,6 +154,7 @@ public class UserServiceImpl implements IUserService{
      * @param forgetToken 回答问题的token
      * @return 未登录状态下的重置密码是否成功
      */
+    @Override
     public ServerResponse<String> forgetResetPassword(String username,String passwordNew,String forgetToken) {
         //判断token参数
             if(StringUtils.isBlank(forgetToken)){
@@ -186,6 +192,7 @@ public class UserServiceImpl implements IUserService{
      * @param user 当前用户
      * @return 登陆状态下修改密码是否成功
      */
+    @Override
     public ServerResponse<String> resetPassword(String passwordOld,String passwordNew,User user){
         //为了防止横向越权，我们需要知道当前旧密码是否与当前用户匹配，
         //因为我们会查询一个count（1） ，如果不指定id，那么很容易会返回true。
@@ -208,6 +215,7 @@ public class UserServiceImpl implements IUserService{
      * @param user 当前用户信息
      * @return user 修改后的用户封装
      */
+    @Override
     public ServerResponse<User> update_information(User user){
         //对email 进行检验: 当更新了email后，不能和数据库中其他人的email重合
         int resultCount = userMapper.CheckEmailByUserId(user.getEmail(),user.getId());
@@ -236,6 +244,7 @@ public class UserServiceImpl implements IUserService{
      * @param id 通过id查找用户详情
      * @return 当前用户
      */
+    @Override
     public ServerResponse<User> getinformation(Integer id){
             //根据id查询当前用户是否存在
         User user = userMapper.selectByPrimaryKey(id);
@@ -247,6 +256,7 @@ public class UserServiceImpl implements IUserService{
         return ServerResponse.createBySuccess(user);
     }
 
+    @Override
     public ServerResponse<String> checkAdminRole(User user){
         if(user != null && user.getRole()==Const.Role.ROLE_ADMIN){
             return ServerResponse.createBySuccess();

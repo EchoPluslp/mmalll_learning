@@ -25,7 +25,7 @@ import javax.servlet.http.HttpSession;
 public class UserController {
 
     @Autowired
-    private UserServiceImpl iUserService; //此时使用了多态，类的接口，指向类的本身
+    private UserServiceImpl iUserService;
 
 
     /**
@@ -68,7 +68,7 @@ public class UserController {
     @RequestMapping(value = "register.do",method = RequestMethod.POST)
     @ResponseBody
     public ServerResponse<String> register(User user){
-        return iUserService.register(user);//因为使用了多态，所以iUserService会调用Impl中的方法.
+        return iUserService.register(user);
     }
 
     /**
