@@ -3,14 +3,13 @@ package com.mmall.controller.backend;
 import com.mmall.common.Const;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.ServerResponse;
-import com.mmall.service.impl.pojo.User;
 import com.mmall.service.ICategoryService;
 import com.mmall.service.IUserService;
+import com.mmall.service.impl.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 
@@ -20,7 +19,7 @@ import javax.servlet.http.HttpSession;
  * @author Liupeng
  * @create 2018-04-30 22:05
  **/
-@Controller
+@RestController
 @RequestMapping("/manage/category")
 public class CategoryManageController {
 
@@ -38,7 +37,6 @@ public class CategoryManageController {
      * @return
      */
     @RequestMapping("add_category.do")
-    @ResponseBody//使返回值自动使用jackson的序列化
     public ServerResponse addCategory(HttpSession session,String categoryName,
                                       @RequestParam(value = "parentId",defaultValue = "0") int parentId){
                                     //对parentId进行控制，如果前端不传值，那么就默认为0
@@ -65,7 +63,6 @@ public class CategoryManageController {
      * @return
      */
     @RequestMapping("set_category_name.do")
-    @ResponseBody
     public ServerResponse setCategory(HttpSession session,Integer categoryId,String categoryName){
         User user = (User)session.getAttribute(Const.CURRENT_USER);
         //判断用户是否非空
@@ -89,7 +86,6 @@ public class CategoryManageController {
      * @return
      */
     @RequestMapping("get_category.do")
-    @ResponseBody
     public ServerResponse getChildParallelCategory(HttpSession session,@RequestParam(value ="categoryId",
     defaultValue = "0") Integer categoryId){
         User user = (User)session.getAttribute(Const.CURRENT_USER);
@@ -114,7 +110,6 @@ public class CategoryManageController {
      * @return
      */
     @RequestMapping("get_deep_category.do")
-    @ResponseBody
     public ServerResponse getCategoryAndDeepChildrenCategory(HttpSession session,@RequestParam(value ="categoryId",
             defaultValue = "0") Integer categoryId){
         User user = (User)session.getAttribute(Const.CURRENT_USER);

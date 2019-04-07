@@ -96,6 +96,7 @@ public class CategoryServiceImpl implements ICategoryService{
      * @param categoryId 查找当前节点下的所有子节点
      * @return 所有list集合
      */
+    @Override
     public ServerResponse selectCategoryAndChildrenById(Integer categoryId){
         Set<Category> categorySet = Sets.newHashSet();
         findChildCategory(categorySet,categoryId);//通过递归实现查找当前节点和子节点的id
